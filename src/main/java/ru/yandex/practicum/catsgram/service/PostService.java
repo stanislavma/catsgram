@@ -47,6 +47,32 @@ public class PostService {
 
     }
 
+    public List<Post> findAllByUserEmail(String email, Integer size, String sort) {
+        Comparator<Post> comparator = Comparator.comparing(Post::getCreationDate);
+        if ("desc".equalsIgnoreCase(sort)) {
+            comparator = comparator.reversed();
+        }
+
+        return posts.stream()
+                .sorted(comparator)
+                .filter(post ->  post.getAuthor().equals(email))
+                .limit(size)
+                .collect(Collectors.toList());
+    }
+
+    public List<Post> findAllByUserEmails(List<String> emails, Integer size, String sort) {
+        Comparator<Post> comparator = Comparator.comparing(Post::getCreationDate);
+        if ("desc".equalsIgnoreCase(sort)) {
+            comparator = comparator.reversed();
+        }
+
+        return posts.stream()
+                .sorted(comparator)
+                .filter(post -> emails.contains(post.getAuthor()))
+                .limit(size)
+                .collect(Collectors.toList());
+    }
+
     public Optional<Post> findById(int postId) {
         return posts.stream()
                 .filter(x -> x.getId() == postId)

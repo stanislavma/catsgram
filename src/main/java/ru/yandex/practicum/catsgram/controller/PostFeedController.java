@@ -27,12 +27,9 @@ public class PostFeedController {
     public List<Post> getFriendPosts(@RequestBody String body) {
         log.info(String.valueOf(body));
         try {
-            String cleanJsonString = body.trim()
-                    .replaceAll("^\"+|\"+$", "")
-                    .replace("\\\"", "\"");
-
-            FriendFeed friendFeed = objectMapper.readValue(cleanJsonString, FriendFeed.class);
-
+            String paramsFromString = objectMapper.readValue(body, String.class);
+            FriendFeed friendFeed = objectMapper.readValue(paramsFromString, FriendFeed.class);
+  
             return postFeedService.findAll(friendFeed.getSort(), friendFeed.getSize(), friendFeed.getFriends());
         } catch (Exception e) {
             log.error("Error", e);

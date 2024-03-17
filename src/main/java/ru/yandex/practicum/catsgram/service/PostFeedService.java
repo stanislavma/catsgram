@@ -31,13 +31,13 @@ public class PostFeedService {
     }
 
     public List<Post> findAll(String sort, int size, List<String> authorList) {
-        List<Post> posts = postService.findAll(sort, size, 0);
+        List<Post> posts = postService.findAllByUserEmails(authorList, size, sort);
 
-        List<Post> postsFiltered = posts.stream()
-                .filter(post -> authorList.contains(post.getAuthor()))
-                .collect(Collectors.toList());
+//        List<Post> postsFiltered = posts.stream()
+//                .filter(post -> authorList.contains(post.getAuthor()))
+//                .collect(Collectors.toList());
 
-        return postsFiltered;
+        return posts;
 
     }
 
