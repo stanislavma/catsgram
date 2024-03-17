@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.catsgram.controller.exceptions.InvalidEmailException;
 import ru.yandex.practicum.catsgram.controller.exceptions.UserAlreadyExistException;
+import ru.yandex.practicum.catsgram.model.Post;
 import ru.yandex.practicum.catsgram.model.User;
 import ru.yandex.practicum.catsgram.service.PostService;
 import ru.yandex.practicum.catsgram.service.UserService;
@@ -28,6 +29,11 @@ public class UserController {
         log.info("Текущее количество пользователей: " + userService.findAll().size());
 
         return userService.findAll();
+    }
+
+    @GetMapping("/posts/{email}")
+    public User findByEmail(@PathVariable String email) {
+        return userService.getUserByEmail(email);
     }
 
     @PostMapping()
