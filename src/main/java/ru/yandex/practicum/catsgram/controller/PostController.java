@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.catsgram.controller.exceptions.IncorrectParameterException;
 import ru.yandex.practicum.catsgram.model.Post;
 import ru.yandex.practicum.catsgram.service.PostService;
 
@@ -29,10 +30,13 @@ public class PostController {
                               @RequestParam(defaultValue = "0", required = false) Integer page) {
 
         if (!(sort.equals("asc") || sort.equals("desc"))) {
-            throw new IllegalArgumentException();
+            throw new IncorrectParameterException("sort exception", sort);
         }
-        if (page < 0 || size <= 0) {
-            throw new IllegalArgumentException();
+        if (page < 0) {
+            throw new IncorrectParameterException("page exception", page.toString());
+        }
+        if (size <= 0) {
+            throw new IncorrectParameterException("size exception", size.toString());
         }
 
         int from = size * page;
@@ -41,7 +45,7 @@ public class PostController {
     }
 
     @GetMapping("/posts/{postId}")
-    public Optional<Post> findById(@PathVariable int postId) {
+    public Post findById(@PathVariable int postId) {
         return postService.findById(postId);
     }
 

@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import ru.yandex.practicum.catsgram.controller.PostController;
+import ru.yandex.practicum.catsgram.controller.exceptions.PostNotFoundException;
 import ru.yandex.practicum.catsgram.controller.exceptions.UserNotFoundException;
 import ru.yandex.practicum.catsgram.model.Post;
 
@@ -55,7 +56,7 @@ public class PostService {
 
         return posts.stream()
                 .sorted(comparator)
-                .filter(post ->  post.getAuthor().equals(email))
+                .filter(post -> post.getAuthor().equals(email))
                 .limit(size)
                 .collect(Collectors.toList());
     }
@@ -73,21 +74,16 @@ public class PostService {
                 .collect(Collectors.toList());
     }
 
-    public Optional<Post> findById(int postId) {
+    public Post findById(int postId) {
         return posts.stream()
                 .filter(x -> x.getId() == postId)
-                .findFirst();
+                .findFirst()
+                .orElseThrow(() -> new PostNotFoundException(String.format("Пост № %d не найден", postId)));
     }
 
-
     public Post create(Post post) {
-        try {
-            if (userService.getUserByEmail(post.getAuthor()) == null) {
-                throw new UserNotFoundException("«Пользователь " + post.getAuthor() + " не найден».");
-            }
-        } catch (UserNotFoundException e) {
-            log.error(e.getMessage());
-            return post;
+        if (userService.getUserByEmail(post.getAuthor()) == null) {
+            throw new UserNotFoundException("«Пользователь " + post.getAuthor() + " не найден».");
         }
 
         post.setId(getNextId());
